@@ -6,6 +6,8 @@ using DG.Tweening;
 
 public class Clicker : MonoBehaviour
 {
+
+    public ParticleSystem cookieParticles;
     public TextMeshProUGUI ScoreBox;
     int click = 0;
 
@@ -24,6 +26,7 @@ public class Clicker : MonoBehaviour
         }
         set
         {
+            cookieParticles.Emit(value - clicks); ;
             clicks = value;
 
             ScoreBox.text = clicks + "";
@@ -36,6 +39,8 @@ public class Clicker : MonoBehaviour
     private void Start()
     {
        audio = GetComponent<AudioSource>();
+
+       //LoadData();
     }
 
     private void OnMouseDown()
@@ -49,5 +54,33 @@ public class Clicker : MonoBehaviour
 
         audio?.PlayOneShot(AudioClick);
     }
-    
+
+
+    void LoadData()
+    {
+        if (PlayerPrefs.HasKey(nameof(clicks)))
+        {
+            Clicks = PlayerPrefs.GetInt(nameof(clicks));
+        }
+    }
+
+    void SaveData()
+    {
+        PlayerPrefs.SetInt(nameof(clicks), clicks);
+        PlayerPrefs.Save();
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveData();
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        {
+            SaveData();
+        }
+    }
+
 }
